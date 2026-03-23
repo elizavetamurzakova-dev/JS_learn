@@ -4,5 +4,6 @@ class Ship{
         this.len_ship = len_ship;
         this.hits = hits;
         this.len_ship = len_ship;
+        this.startPosition = startPosition;
     }
 }
