@@ -112,28 +112,28 @@ class Board {
         this._ships = value;
     }
 
-    placeShip(ship, x, y){
-        if(ship.vertical == 0 && (x + ship.len) <= this._size){
-            for(let i = 0; i < ship.len; i++){
-                if (this._grid[y][x + 1] !== null) return console.log("Мест нет");
+    placeShip(ship, x, y) {
+        if (ship.vertical == 0 && (x + ship.len) <= this._size) {
+            for (let i = 0; i < ship.len; i++) {
+                if (this._grid[y][x + i] !== null) return console.log("Мест нет");  
             }
-            for(let i = 0; i < ship.len; i++){
-                this._grid[y][x + i] = ship;
+            for (let i = 0; i < ship.len; i++) {
+                this._grid[y][x + i] = ship;  
             }
             this._ships.push(ship);
             ship.position_x = x;
-        }
-        else if (ship.vertical == 1 && (y + ship.len) <= this._size){
-            for(let i = 0; i < ship.len; i++){
-                if (this._grid[y + 1][x] !== null) return console.log("Мест нет");
+            ship.position_y = y;  
+        } else if (ship.vertical == 1 && (y + ship.len) <= this._size) {
+            for (let i = 0; i < ship.len; i++) {
+                if (this._grid[y + i][x] !== null) return console.log("Мест нет");  
             }
-            for(let i = 0; i < ship.len; i++){
-                this._grid[y + 1][x] = ship;
+            for (let i = 0; i < ship.len; i++) {
+                this._grid[y + i][x] = ship;
             }
             this._ships.push(ship);
+            ship.position_x = x; 
             ship.position_y = y;
-        }
-        else{
+        } else {
             console.log("Корабль не помещается");
         }
     }
@@ -151,47 +151,53 @@ class Board {
         return availableCells;
     }
 
-    receiveAttack(x, y){
+    receiveAttack(x, y) {
         const ship = this._grid[y][x];
 
-        if (ship !== null){
-            if (ship.vertical === 0){
+        if (ship !== null) {
+            if (ship.vertical === 0) {
                 let index = x - ship.position_x;
                 ship.hit(index);
-            }
-            if (ship.vertical === 1){
+            } else if (ship.vertical === 1) {
                 let index = y - ship.position_y;
                 ship.hit(index);
             }
             return true;
         }
-        else return false;
+        return false;
     }
 
-    display(){
-        for (let y = 0; y < this._size; y++){
+    display() {
+        for (let y = 0; y < this._size; y++) {
             let row = '';
-            for (let x = 0; x < this._size; y++){
-                if (this._grid[y][x] === null) row += 'O';
-                else if (this._grid[y][x] !== null){
-                    if (this._grid[y][x].vertical === true){
-                        let index = y - this._grid.position_y;
-                        if (this._grid.hits[index] === true) row += 'X';
-                        else row += 'S';
+            for (let x = 0; x < this._size; x++) { 
+                if (this._grid[y][x] === null) {
+                    row += 'O';
+                } else {
+                    const ship = this._grid[y][x];
+                    let isHit = false;
+                
+                    if (ship.vertical === 0) {
+                        let index = x - ship.position_x;
+                        if (ship.hits[index] === true) {
+                            isHit = true;
+                        }
+                    } else if (ship.vertical === 1) {
+                        let index = y - ship.position_y;
+                        if (ship.hits[index] === true) {
+                            isHit = true;
+                        }
                     }
-                    else if (this._grid[y][x].vertical === false){
-                        let index = x - this._grid.position_x;
-                        if (this._grid.hits[index] === true) row += 'X';
-                        else row += 'S';
-                    }
+                    
+                    row += isHit ? 'X' : 'S';
                 }
-                console.log(`Row ${y}:`, row);
             }
+            console.log(row);
         }
     }
 }
 
-let boardSize = prompt("Введите размер поля:");
+let boardSize = prompt('Введите размер поля:');
 let shipTest = new Ship('ShipTest', 3, 1);
 let board = new Board(parseInt(boardSize));
 board.placeShip(shipTest, 0, 0);
